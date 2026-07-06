@@ -1,10 +1,12 @@
-module gorm.io/driver/postgres
+module github.com/godoes/gorm-kingbase
 
 go 1.25.0
 
 require (
+	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9
 	github.com/jackc/pgx/v5 v5.10.0
-	gorm.io/gorm v1.25.10
+	github.com/shopspring/decimal v1.4.0
+	gorm.io/gorm v1.31.2
 )
 
 require (
@@ -16,5 +18,3 @@ require (
 	golang.org/x/sync v0.17.0 // indirect
 	golang.org/x/text v0.29.0 // indirect
 )
-
-retract v1.5.5 // Published accidentally.

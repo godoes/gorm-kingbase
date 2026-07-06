@@ -1,4 +1,4 @@
-package postgres
+package kingbase
 
 import "testing"
 

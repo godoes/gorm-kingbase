@@ -1,31 +1,68 @@
-# GORM PostgreSQL Driver
+# GORM KingbaseES Driver
 
-## Quick Start
+基于 KingbaseES 数据库官方 Go 驱动源码
+二次开发整理的开箱即用的 GORM KingbaseES 数据库驱动，
+无需单独复制驱动源码到项目中。
 
-```go
-import (
-  "gorm.io/driver/postgres"
-  "gorm.io/gorm"
-)
+获取 KingbaseES 最新官方 Go 驱动请访问
+<https://www.kingbase.com.cn/download.html#drive>。
 
-// https://github.com/jackc/pgx
-dsn := "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
-db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+## 最低要求
+
+- go `1.25`：<https://go.dev/dl/>
+- gorm `v1.31.2`：<https://github.com/go-gorm/gorm>
+- KES `V008R006C009B0014`：<https://www.kingbase.com.cn/download.html#database>
+
+## 快速上手
+
+### 安装
+
+```shell
+go get github.com/godoes/gorm-kingbase
 ```
 
-## Configuration
+### 默认用例
 
 ```go
 import (
-  "gorm.io/driver/postgres"
-  "gorm.io/gorm"
+    "github.com/godoes/gorm-kingbase"
+    "gorm.io/gorm"
 )
 
-db, err := gorm.Open(postgres.New(postgres.Config{
-  DSN: "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai", // data source name, refer https://github.com/jackc/pgx
-  PreferSimpleProtocol: true, // disables implicit prepared statement usage. By default pgx automatically uses the extended protocol
+// https://docs.kingbase.com.cn/cn/KES-V9R1C10/application/client_interface/GO/Gokb/go-2/
+dsn := "host=localhost user=SYSTEM password=123456 dbname=TEST port=54321 sslmode=disable"
+db, err := gorm.Open(kingbase.Open(dsn), &gorm.Config{})
+```
+
+### 配置用例
+
+```go
+import (
+    "github.com/godoes/gorm-kingbase"
+    "gorm.io/gorm"
+)
+
+db, err := gorm.Open(kingbase.New(kingbase.Config{
+    // data source name, refer https://docs.kingbase.com.cn/cn/KES-V9R1C10/application/client_interface/GO/Gokb/go-2/
+    DSN: "host=localhost user=SYSTEM password=123456 dbname=TEST port=54321 sslmode=disable",
+    // disables implicit prepared statement usage. By default pgx automatically uses the extended protocol
+    PreferSimpleProtocol: true,
 }), &gorm.Config{})
 ```
 
+## 参考文档
 
-Checkout [https://gorm.io](https://gorm.io) for details.
+### KingbaseES 技术文档
+
+- 产品简介：<https://docs.kingbase.com.cn/cn/KES-V9R1C10/introduction>
+- 常见问题：<https://docs.kingbase.com.cn/cn/KES-V9R1C10/question/>
+- GO 客户端编程接口 <https://docs.kingbase.com.cn/cn/KES-V9R1C10/category/gokb>
+- 应用开发指南：<https://docs.kingbase.com.cn/cn/KES-V9R1C10/application/application-develop-guide/>
+
+### GORM 文档
+
+- 文档首页：<https://gorm.io/zh_CN/docs/>
+- 声明模型：<https://gorm.io/zh_CN/docs/models.html>
+- 连接到数据库：<https://gorm.io/zh_CN/docs/connecting_to_the_database.html>
+
+---
