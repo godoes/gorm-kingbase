@@ -122,7 +122,7 @@ func (fd fieldDesc) Length(cn *conn) (len int64, state bool) {
 			case -1, 0:
 				secondSizeT = 0
 			case 1:
-				// Bizarraely SELECT '0:0:0.1'::time(1); 返回2位.
+				//Bizarraely SELECT '0:0:0.1'::time(1); 返回2位.
 				secondSizeT = 1 + 1
 			default:
 				secondSizeT = fd.Mod + 1
@@ -251,7 +251,7 @@ func (fd fieldDesc) PrecisionScale(cn *conn) (precision int64, scale int64, stat
 			case -1, 0:
 				secondSizeT = 0
 			case 1:
-				// Bizarraely SELECT '0:0:0.1'::time(1); 返回2位.
+				//Bizarraely SELECT '0:0:0.1'::time(1); 返回2位.
 				secondSizeT = 1 + 1
 			default:
 				secondSizeT = fd.Mod + 1

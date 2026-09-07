@@ -153,14 +153,14 @@ func encode(parameterStatus *parameterStatus, x interface{}, kbtypOid oid.Oid, c
 	case time.Time:
 		return formatTs(time.Time(v))
 	case DateTime1:
-		return formatTs(time.Time(v)) // datetime
+		return formatTs(time.Time(v)) //datetime
 	case civil.Date:
 		return formatD(v)
 	case civil.Time:
 		return formatT(v)
 	case CursorString:
 		return []byte(v.CursorName)
-	case sql.Out: // out参数
+	case sql.Out: //out参数
 		var sBind bindStruct
 		var valueInterface interface{}
 		valueInterface = v
@@ -323,11 +323,11 @@ func textDecode(parameterStatus *parameterStatus, s []byte, typ oid.Oid, cn conn
 		}
 		value = f
 		return
-	case cn.allOid.T_numeric: // numeric/decimal
+	case cn.allOid.T_numeric: //numeric/decimal
 		// num, _ := decimal.NewFromString(string(s))
 		// return num
 		return s
-	case cn.allOid.T_money: // money
+	case cn.allOid.T_money: //money
 		newString := strings.ReplaceAll(string(s), ",", "")
 		num, _ := decimal.NewFromString(newString)
 		return num
@@ -675,7 +675,7 @@ func ParseTimestamp(currentLocation *time.Location, str string) (pt time.Time, e
 		// _, newOff := lt.Zone()
 		// if tzOff == newOff { t = lt }
 
-		// 使用当前数据库时区
+		//使用当前数据库时区
 		t = time.Date(isoYear, time.Month(month), day, hour, minute, second, nanoSec, currentLocation)
 	}
 	return t, p.err

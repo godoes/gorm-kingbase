@@ -11,7 +11,7 @@
 
 - go `1.25`：<https://go.dev/dl/>
 - gorm `v1.31.2`：<https://github.com/go-gorm/gorm>
-- KES `V008R006C009B0014`：<https://www.kingbase.com.cn/download.html#database>
+- KES `V009R001C010B0004`：<https://www.kingbase.com.cn/download.html#database>
 
 ## 快速上手
 

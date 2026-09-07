@@ -268,7 +268,7 @@ func (sm3 *SM3) Reset() {
 	sm3.digest[6] = 0xe38dee4d
 	sm3.digest[7] = 0xb0fb0e4e
 
-	sm3.length = 0 // 重置数值状态
+	sm3.length = 0 //重置数值状态
 	sm3.unhandleMsg = []byte{}
 	return
 }
@@ -295,7 +295,7 @@ func (sm3 *SM3) Sum(in []byte) (out []byte) {
 	msg := sm3.pad()
 	digest := sm3.update2(msg)
 
-	// 保存哈希值到in中
+	//保存哈希值到in中
 	needed := sm3.Size()
 	left := cap(in) - len(in)
 	if needed > left {

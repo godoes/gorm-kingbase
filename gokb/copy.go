@@ -143,7 +143,7 @@ func (ci *copyin) resploop() {
 			return
 		}
 		switch t {
-		case 'C': // 命令完成
+		case 'C': //命令完成
 		case 'N':
 			if n := ci.cn.noticeHandler; nil != n {
 				n(parseError(&r))
@@ -240,7 +240,7 @@ func (ci *copyin) Exec(v []driver.Value) (driver.Result, error) {
 
 	if ciBufferFlushSize < len(ci.buffer) {
 		ci.flush(ci.buffer)
-		// 重置缓冲区，为报文标识和长度预留空间
+		//重置缓冲区，为报文标识和长度预留空间
 		ci.buffer = ci.buffer[:5]
 	}
 

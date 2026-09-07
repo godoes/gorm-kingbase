@@ -139,20 +139,20 @@ func replaceProcName(query string, args []driver.NamedValue, stNameList []string
 	isProc := isSqlserverProcName(query)
 	argNum := len(args)
 	if isProc {
-		// 获取命名参数的参数值
+		//获取命名参数的参数值
 		var argList []driver.Value
 		for _, v := range args {
 			argList = append(argList, v.Value)
 		}
-		// 返回值不占用占位符
+		//返回值不占用占位符
 		for _, t := range argList {
 			if _, ret := t.(*ReturnStatus); ret {
 				argNum--
 			}
 		}
 
-		// 将存储过程名字替换为CALL调用
-		// 此时绑定参数的数量必须与调用的存储过程所包含的占位符数量相等
+		//将存储过程名字替换为CALL调用
+		//此时绑定参数的数量必须与调用的存储过程所包含的占位符数量相等
 		query = "exec " + query + " "
 		for i := 0; i < argNum; i++ {
 			query = fmt.Sprintf("%s$%d", query, i+1)
@@ -163,7 +163,7 @@ func replaceProcName(query string, args []driver.NamedValue, stNameList []string
 
 		return query, argList, stNameList, nil
 	}
-	// 非sqlserver存储过程名的其它sql文本
+	//非sqlserver存储过程名的其它sql文本
 	return replaceHolderMarkers(query, args, stNameList)
 
 }
@@ -171,10 +171,10 @@ func replaceProcName(query string, args []driver.NamedValue, stNameList []string
 func isNameExist(hoderList map[string]int, name string, markID int) int {
 	_, ok := hoderList[name]
 	if ok {
-		// 如果已有该占位符名字，则仍使用原本的匿名数字编号
+		//如果已有该占位符名字，则仍使用原本的匿名数字编号
 		return hoderList[name]
 	}
-	// 新的占位符名字，将其添加到hoderList中
+	//新的占位符名字，将其添加到hoderList中
 	hoderList[name] = markID
 	return 0
 }
@@ -208,7 +208,7 @@ func replaceHolderMarkers(query string, args []driver.NamedValue, stNameList []s
 				} else if q[i+1] == '=' {
 					s += ":"
 				} else if unicode.IsLetter(q[i+1]) && !inQuote {
-					// 获取所有占位符的名字
+					//获取所有占位符的名字
 					for ; q[i+1] != ',' && q[i+1] != ')' && q[i+1] != ':' && q[i+1] != ' ' && q[i+1] != ';' && q[i+1] != '\n' && q[i+1] != '\t'; i++ {
 						name += string(q[i+1])
 						if i+2 == length {
@@ -243,7 +243,7 @@ func replaceHolderMarkers(query string, args []driver.NamedValue, stNameList []s
 					break
 				}
 				if unicode.IsLetter(q[i+1]) && !inQuote {
-					// 获取所有占位符的名字
+					//获取所有占位符的名字
 					for ; q[i+1] != ',' && q[i+1] != ')' && q[i+1] != ':' && q[i+1] != ' ' && q[i+1] != ';' && q[i+1] != '\n' && q[i+1] != '\t'; i++ {
 						name += string(q[i+1])
 						if i+2 == length {
@@ -270,7 +270,7 @@ func replaceHolderMarkers(query string, args []driver.NamedValue, stNameList []s
 					break
 				}
 				if unicode.IsLetter(q[i+1]) && !inQuote {
-					// 获取所有占位符的名字
+					//获取所有占位符的名字
 					for ; q[i+1] != ',' && q[i+1] != ')' && q[i+1] != ':' && q[i+1] != ' ' && q[i+1] != ';' && q[i+1] != '\n' && q[i+1] != '\t'; i++ {
 						name += string(q[i+1])
 						if i+2 == length {
@@ -302,8 +302,8 @@ func replaceHolderMarkers(query string, args []driver.NamedValue, stNameList []s
 		nameList = stNameList
 	}
 
-	if len(args) != 0 { // 绑定参数
-		if len(nameList) != 0 { // 命名占位符
+	if len(args) != 0 { //绑定参数
+		if len(nameList) != 0 { //命名占位符
 			nameMap := make(map[string]driver.Value)
 			n := len(nameList)
 			var retVal *ReturnStatus
@@ -329,14 +329,14 @@ func replaceHolderMarkers(query string, args []driver.NamedValue, stNameList []s
 			}
 			return s, argList, nameList, nil
 		}
-		// 匿名占位符
+		//匿名占位符
 		argList := make([]driver.Value, len(args))
 		for i, v := range args {
 			argList[i] = v.Value
 		}
 		return s, argList, nil, nil
 	}
-	// 无绑定参数
+	//无绑定参数
 	var argList []driver.Value
 	for _, v := range args {
 		argList = append(argList, v.Value)
@@ -408,14 +408,14 @@ func (cn *conn) handleDriverSettings(o values) (err error) {
 		return err
 	}
 
-	// 获取自增列id
+	//获取自增列id
 	err = boolSetting("get_last_insert_id", &cn.getLastInsertId.enable)
 	cn.getLastInsertId.isInsert = false
 	if nil != err {
 		return err
 	}
 
-	// 多主机地址的连接重试次数和每次连接的延迟
+	//多主机地址的连接重试次数和每次连接的延迟
 	err = numSetting("retry", &cn.retry)
 	if nil != err {
 		return err
@@ -424,7 +424,7 @@ func (cn *conn) handleDriverSettings(o values) (err error) {
 	if nil != err {
 		return err
 	}
-	// 多主机地址是否需要找主
+	//多主机地址是否需要找主
 	if value, ok := o["target_session_attrs"]; ok {
 		if value == "read-write" {
 			cn.requirePrimary = true
@@ -536,8 +536,8 @@ func DialOpen(_ Dialer, dsn string) (dc driver.Conn, err error) {
 		dc = nil
 		return
 	}
-	// 使用连接器中构建的dialer
-	// c.dialer = d
+	//使用连接器中构建的dialer
+	//c.dialer = d
 	dc, err = c.open(context.Background())
 	return
 }
@@ -566,7 +566,7 @@ func (c *Connector) open(ctx context.Context) (cn *conn, err error) {
 	}
 	cn.handleKbpass(o)
 
-	// 支持多主机地址
+	//支持多主机地址
 	var lastErr error
 	var panicking = true
 	if numHosts != numPorts {
@@ -612,7 +612,7 @@ func (c *Connector) open(ctx context.Context) (cn *conn, err error) {
 			cn.buf = bufio.NewReader(cn.c)
 			cn.startup(o)
 
-			// 判断是否需要找主
+			//判断是否需要找主
 			if cn.requirePrimary {
 				isPrimary, err := getPrimary(cn)
 				if err != nil {
@@ -623,7 +623,7 @@ func (c *Connector) open(ctx context.Context) (cn *conn, err error) {
 					continue
 				}
 				if !isPrimary {
-					// 非主节点
+					//非主节点
 					if nil != cn.c {
 						_ = cn.c.Close()
 					}
@@ -631,7 +631,7 @@ func (c *Connector) open(ctx context.Context) (cn *conn, err error) {
 					continue
 				}
 			}
-			// 已找到符合要求的节点，退出循环
+			//已找到符合要求的节点，退出循环
 			err = nil
 			lastErr = nil
 			break
@@ -661,7 +661,7 @@ func (c *Connector) open(ctx context.Context) (cn *conn, err error) {
 
 	// 获取数据库模式
 	err = getDatabaseMode(cn)
-	// 忽略了因为数据库模式查询导致的出错，避免连接pg生态没有数据库模式导致无法连接
+	//忽略了因为数据库模式查询导致的出错，避免连接pg生态没有数据库模式导致无法连接
 	if err != nil {
 		return
 	}
@@ -739,7 +739,7 @@ func getDatabaseMode(cn *conn) (err error) {
 
 	rs, err := cn.simpleQuery("show database_mode;")
 	if nil != err {
-		// 忽略查询数据库模式的出错，该错误可能是因为连接pg生态没有数据库模式
+		//忽略查询数据库模式的出错，该错误可能是因为连接pg生态没有数据库模式
 		setDatabaseModeOid(cn)
 		return nil
 	}
@@ -750,7 +750,7 @@ func getDatabaseMode(cn *conn) (err error) {
 		}
 		switch t {
 		case 'E':
-			// 上述已忽略错误，此处不会执行
+			//上述已忽略错误，此处不会执行
 			err = parseError(&rs.rb)
 		case 'C', 'I', 'Z':
 			if 'C' == t {
@@ -959,7 +959,7 @@ func parseOpts(name string, o values) (hosts []string, ports []string, err error
 			ok                 bool
 		)
 
-		// 跳过连接串的前导空格
+		//跳过连接串的前导空格
 		if r, ok = s.SkipSpaces(); !ok {
 			break
 		}
@@ -1024,7 +1024,7 @@ func parseOpts(name string, o values) (hosts []string, ports []string, err error
 		}
 		o[string(keyRunes)] = string(valRunes)
 	}
-	// 解析多主机地址和端口
+	//解析多主机地址和端口
 	hosts = strings.Split(o["host"], ",")
 	for i, h := range hosts {
 		hosts[i] = strings.TrimSpace(h)
@@ -1166,19 +1166,19 @@ func (cn *conn) gname() (result string) {
 }
 
 func (cn *conn) addReturning(q string) string {
-	// 去除首尾空白字符
+	//去除首尾空白字符
 	trimmedSql := strings.TrimSpace(q)
-	// 转为小写以忽略大小写
+	//转为小写以忽略大小写
 	lowerSql := strings.ToLower(trimmedSql)
 	if strings.HasPrefix(lowerSql, "insert") {
-		// 数据库不支持insert ignore+returning的用法
+		//数据库不支持insert ignore+returning的用法
 		cn.getLastInsertId.isInsert = true
 		if strings.HasSuffix(lowerSql, ";") {
 			trimmedSql = strings.TrimSuffix(trimmedSql, ";")
 		}
 		return trimmedSql + " RETURNING *"
 	}
-	// 非insert语句，返回原sql
+	//非insert语句，返回原sql
 	cn.getLastInsertId.isInsert = false
 	return q
 }
@@ -1219,7 +1219,7 @@ func getID(cn *conn) (id int64) {
 				continue
 			}
 			dest = decode(&cn.parameterStatus, rs.rb.next(l), rs.colTyps[0].OID, rs.colFmts[0], *cn)
-			// 数据库返回的last_insert_id将会被解析为uint64
+			//数据库返回的last_insert_id将会被解析为uint64
 			id = int64(dest.(uint64))
 			continue
 		default:
@@ -1230,12 +1230,12 @@ func getID(cn *conn) (id int64) {
 }
 
 func (cn *conn) simpleExec(q string) (res driver.Result, commandTag string, err error) {
-	// 判断是否需要拼接RETURNING *以获取自增列id
+	//判断是否需要拼接RETURNING *以获取自增列id
 	var row *rows
 	var dest interface{}
 	var lastID int64 = 0
 	var alreadyGet = false
-	// var tag string
+	//var tag string
 	if cn.getLastInsertId.enable {
 		q = cn.addReturning(q)
 	}
@@ -1255,18 +1255,18 @@ func (cn *conn) simpleExec(q string) (res driver.Result, commandTag string, err 
 				err = errUnexpectedReady
 			}
 			return
-		case 'T': // 可能的自增列id的T
+		case 'T': //可能的自增列id的T
 			if cn.getLastInsertId.enable && cn.getLastInsertId.isInsert {
 				row = &rows{cn: cn}
 				row.rowsHeader = parsePortalRowDescribe(r)
 			}
-		case 'D': // 可能的自增列id的D
+		case 'D': //可能的自增列id的D
 			if cn.getLastInsertId.enable && cn.getLastInsertId.isInsert {
 				if nil == row {
 					cn.bad = true
 					errorf("unexpected DataRow in simple query execution")
 				}
-				// 获取结果集的第一列结果，即为自增列id
+				//获取结果集的第一列结果，即为自增列id
 				if n := r.int16(); n < 1 {
 					cn.bad = true
 					errorf("unexpected returning num of columns:%d", n)
@@ -1280,8 +1280,8 @@ func (cn *conn) simpleExec(q string) (res driver.Result, commandTag string, err 
 					dest = 0
 					continue
 				}
-				// 可以指定auto_increment的类型：tinyint、int2、int4、uint4、int8、uint8、float4、float8、mediumint、middleint、unsignedsmallint、unsignedmediumint
-				// 截止20251205-Main_MySQLMode_Dev，域类型-基类型：bigint为int8；mediumint、middleint、unsignedsmallint、unsignedmediumint均为int4
+				//可以指定auto_increment的类型：tinyint、int2、int4、uint4、int8、uint8、float4、float8、mediumint、middleint、unsignedsmallint、unsignedmediumint
+				//截止20251205-Main_MySQLMode_Dev，域类型-基类型：bigint为int8；mediumint、middleint、unsignedsmallint、unsignedmediumint均为int4
 				dest = decode(&cn.parameterStatus, r.next(l), row.colTyps[0].OID, row.colFmts[0], *cn)
 				if !alreadyGet {
 					switch row.colTyps[0].OID {
@@ -1305,8 +1305,8 @@ func (cn *conn) simpleExec(q string) (res driver.Result, commandTag string, err 
 						lastID = int64(dest.(float64))
 						alreadyGet = true
 					default:
-						// 对于其它类型不应报错，保持自增值为0即可
-						// errorf("the first column(oid:%d) is not auto_increment id", row.colTyps[0].OID)
+						//对于其它类型不应报错，保持自增值为0即可
+						//errorf("the first column(oid:%d) is not auto_increment id", row.colTyps[0].OID)
 					}
 				}
 				continue
@@ -1337,7 +1337,7 @@ func (cn *conn) simpleQuery(q string) (res *rows, err error) {
 			// 完成
 			return
 		case 'C', 'I':
-			// 允许Query和Exec进行不会返回任何结果的查询
+			//允许Query和Exec进行不会返回任何结果的查询
 			// 但为了防止连接泄露，仍需要向database/sql提供一个对象以供用户可以关闭
 			if nil != err {
 				cn.bad = true
@@ -1481,30 +1481,30 @@ func (cn *conn) sendPmessage(q, stmtName string, v []driver.Value) (hasRet bool)
 		if sBind[i].isOut {
 			switch sBind[i].out.Dest.(type) {
 			case *int:
-				// sBind[i].typ = cn.allOid.T_int
+				//sBind[i].typ = cn.allOid.T_int
 				if GetPlatformBit() == 64 {
-					// sBind[i].typ = cn.allOid.T_int8
+					//sBind[i].typ = cn.allOid.T_int8
 				} else {
-					// sBind[i].typ = cn.allOid.T_int4
+					//sBind[i].typ = cn.allOid.T_int4
 				}
 			case *int64, *sql.NullInt64:
-				// sBind[i].typ = cn.allOid.T_bigint
+				//sBind[i].typ = cn.allOid.T_bigint
 			case *int32:
-				// sBind[i].typ = cn.allOid.T_int
+				//sBind[i].typ = cn.allOid.T_int
 			case *int16:
-				// sBind[i].typ = cn.allOid.T_smallint
+				//sBind[i].typ = cn.allOid.T_smallint
 			case *int8:
-				// sBind[i].typ = cn.allOid.T_tinyint
+				//sBind[i].typ = cn.allOid.T_tinyint
 			case *uint:
 				if GetPlatformBit() == 64 {
-					// sBind[i].typ = cn.allOid.T_uint8
+					//sBind[i].typ = cn.allOid.T_uint8
 				} else {
-					// sBind[i].typ = cn.allOid.T_uint4
+					//sBind[i].typ = cn.allOid.T_uint4
 				}
 			case *uint64:
-				// sBind[i].typ = cn.allOid.T_uint8
+				//sBind[i].typ = cn.allOid.T_uint8
 			case *uint32:
-				// sBind[i].typ = cn.allOid.T_uint4
+				//sBind[i].typ = cn.allOid.T_uint4
 			case *byte:
 				if cn.databaseMode == "sqlserver" {
 					sBind[i].typ = cn.allOid.T_tinyint
@@ -1514,27 +1514,27 @@ func (cn *conn) sendPmessage(q, stmtName string, v []driver.Value) (hasRet bool)
 					sBind[i].typ = cn.allOid.T_binary
 				} else {
 					if len(*((sBind[i].out.Dest).(*[]byte))) <= 32767 {
-						// sBind[i].typ = cn.allOid.T_bytea
+						//sBind[i].typ = cn.allOid.T_bytea
 					} else {
-						// sBind[i].typ = cn.allOid.T_blob
+						//sBind[i].typ = cn.allOid.T_blob
 					}
 				}
 			case *float64, *sql.NullFloat64:
-				// sBind[i].typ = cn.allOid.T_float8
+				//sBind[i].typ = cn.allOid.T_float8
 			case *float32:
-				// sBind[i].typ = cn.allOid.T_float4
+				//sBind[i].typ = cn.allOid.T_float4
 			case *decimal.Decimal:
-				// numeric/decimal
-				// sBind[i].typ = cn.allOid.T_numeric
+				//numeric/decimal
+				//sBind[i].typ = cn.allOid.T_numeric
 			case *bool:
 				sBind[i].typ = cn.allOid.T_bool
 			case *sql.NullBool:
 				sBind[i].typ = cn.allOid.T_bit
 			case *string, *sql.NullString:
-				// sBind[i].typ = cn.allOid.T_bpcharbyte
-				// if len(*((sBind[i].out.Dest).(*string))) > 32767 {
-				// sBind[i].typ = cn.allOid.T_clob
-				// }
+				//sBind[i].typ = cn.allOid.T_bpcharbyte
+				//if len(*((sBind[i].out.Dest).(*string))) > 32767 {
+				//sBind[i].typ = cn.allOid.T_clob
+				//}
 			case *VarChar, *VarCharMax:
 				sBind[i].typ = cn.allOid.T_varcharbyte
 			case *NVarCharMax:
@@ -1542,7 +1542,7 @@ func (cn *conn) sendPmessage(q, stmtName string, v []driver.Value) (hasRet bool)
 			case *NChar:
 				sBind[i].typ = cn.allOid.T_nchar
 			case *time.Time:
-				// time timestamp date
+				//time timestamp date
 			case *DateTime1:
 				sBind[i].typ = cn.allOid.T_datetime
 			case *civil.Date:
@@ -1555,26 +1555,26 @@ func (cn *conn) sendPmessage(q, stmtName string, v []driver.Value) (hasRet bool)
 		} else if (sBind[i].isBoth || !sBind[i].isOut) && !sBind[i].isRet {
 			switch t.(type) {
 			case int:
-				// sBind[i].typ = cn.allOid.T_int
+				//sBind[i].typ = cn.allOid.T_int
 				if GetPlatformBit() == 64 {
-					// sBind[i].typ = cn.allOid.T_int8
+					//sBind[i].typ = cn.allOid.T_int8
 				} else {
-					// sBind[i].typ = cn.allOid.T_int4
+					//sBind[i].typ = cn.allOid.T_int4
 				}
 			case int64, sql.NullInt64:
-				// sBind[i].typ = cn.allOid.T_bigint
+				//sBind[i].typ = cn.allOid.T_bigint
 			case int32:
-				// sBind[i].typ = cn.allOid.T_int
+				//sBind[i].typ = cn.allOid.T_int
 			case int16:
-				// sBind[i].typ = cn.allOid.T_smallint
+				//sBind[i].typ = cn.allOid.T_smallint
 			case int8:
-				// sBind[i].typ = cn.allOid.T_tinyint
+				//sBind[i].typ = cn.allOid.T_tinyint
 			case uint64:
-				// sBind[i].typ = cn.allOid.T_uint8
-				// sBind[i].typ = cn.allOid.T_numeric
+				//sBind[i].typ = cn.allOid.T_uint8
+				//sBind[i].typ = cn.allOid.T_numeric
 			case uint32:
-				// sBind[i].typ = cn.allOid.T_uint4
-				// sBind[i].typ = cn.allOid.T_numeric
+				//sBind[i].typ = cn.allOid.T_uint4
+				//sBind[i].typ = cn.allOid.T_numeric
 			case byte:
 				if cn.databaseMode == "sqlserver" {
 					sBind[i].typ = cn.allOid.T_tinyint
@@ -1584,28 +1584,28 @@ func (cn *conn) sendPmessage(q, stmtName string, v []driver.Value) (hasRet bool)
 					sBind[i].typ = cn.allOid.T_binary
 				} else {
 					if len(t.([]byte)) <= 32767 {
-						// sBind[i].typ = cn.allOid.T_bytea
+						//sBind[i].typ = cn.allOid.T_bytea
 					} else {
-						// sBind[i].typ = cn.allOid.T_blob
+						//sBind[i].typ = cn.allOid.T_blob
 					}
 				}
 			case float64, sql.NullFloat64:
-				// sBind[i].typ = cn.allOid.T_float8
+				//sBind[i].typ = cn.allOid.T_float8
 			case float32:
-				// sBind[i].typ = cn.allOid.T_float4
+				//sBind[i].typ = cn.allOid.T_float4
 			case decimal.Decimal:
-				// numeric/decimal
-				// sBind[i].typ = cn.allOid.T_numeric
+				//numeric/decimal
+				//sBind[i].typ = cn.allOid.T_numeric
 			case bool:
 				sBind[i].typ = cn.allOid.T_bool
 			case *sql.NullBool:
 				sBind[i].typ = cn.allOid.T_bit
 			case string, sql.NullString:
-				// sBind[i].typ = cn.allOid.T_bpcharbyte
-				// if len(t.(string)) > 32767 {
-				// sBind[i].typ = cn.allOid.T_clob
-				// }
-				// char varchar text
+				//sBind[i].typ = cn.allOid.T_bpcharbyte
+				//if len(t.(string)) > 32767 {
+				//sBind[i].typ = cn.allOid.T_clob
+				//}
+				//char varchar text
 			case VarChar, VarCharMax:
 				sBind[i].typ = cn.allOid.T_varcharbyte
 			case NVarCharMax:
@@ -1613,7 +1613,7 @@ func (cn *conn) sendPmessage(q, stmtName string, v []driver.Value) (hasRet bool)
 			case NChar:
 				sBind[i].typ = cn.allOid.T_nchar
 			case time.Time:
-				// time timestamp date
+				//time timestamp date
 			case DateTime1:
 				sBind[i].typ = cn.allOid.T_datetime
 			case *civil.Date:
@@ -1631,14 +1631,14 @@ func (cn *conn) sendPmessage(q, stmtName string, v []driver.Value) (hasRet bool)
 	for i := range sBind {
 		if sBind[i].isOut {
 			if sBind[i].isBoth {
-				// INOUT
+				//INOUT
 				sBind[i].typ |= 3 << 29
 			} else {
-				// OUT
+				//OUT
 				sBind[i].typ |= 1 << 30
 			}
-		} else if !sBind[i].isOut { // && !sBind[i].isRet {
-			// IN
+		} else if !sBind[i].isOut { //&& !sBind[i].isRet {
+			//IN
 			sBind[i].typ |= 1 << 29
 		} else if sBind[i].isRet {
 			continue
@@ -1686,8 +1686,8 @@ func (cn *conn) readPDmessageResponse(st *stmt) (err error) {
 	}
 	st.colFmts, st.colFmtData = decideColumnFormats(cn, st.colTyps, cn.disablePreparedBinaryResult)
 
-	// 此处获取到的T报文，可能是描述有out参数的存储过程，也可能是描述DQL
-	// 先保留此T报文以及绑定的参数，后续解析D报文时根据参数是否为out类型进行区分
+	//此处获取到的T报文，可能是描述有out参数的存储过程，也可能是描述DQL
+	//先保留此T报文以及绑定的参数，后续解析D报文时根据参数是否为out类型进行区分
 	st.TMessage.colNames, st.TMessage.colTyps, st.TMessage.colFmts = st.colNames, st.colTyps, st.colFmts
 
 	cn.readReadyForQuery()
@@ -1983,7 +1983,7 @@ func isDriverSetting(key string) (state bool) {
 		fallthrough
 	case "connect_timeout":
 		fallthrough
-	// case "keepalive_idle": fallthrough//go中idle和interval为相同值
+	//case "keepalive_idle": fallthrough//go中idle和interval为相同值
 	case "keepalive_interval":
 		fallthrough
 	case "keepalive_count":
@@ -2230,12 +2230,12 @@ func (st *stmt) Exec(v []driver.Value) (res driver.Result, err error) {
 	if err != nil {
 		return nil, err
 	}
-	res, _, err = st.cn.readExecuteResponse("simple query", v, st.colTyps, st.colFmts)
+	res, _, err = st.cn.readExecuteResponse("simple query", st.colTyps, st.colFmts)
 	return
 }
 
 func (st *stmt) exec(v []driver.Value) (err error) {
-	// 保存绑定的参数
+	//保存绑定的参数
 	st.bindParams = v
 
 	if 65536 <= len(v) {
@@ -2243,8 +2243,8 @@ func (st *stmt) exec(v []driver.Value) (err error) {
 	}
 	if len(st.paramTyps) != len(v) {
 		if st.hasRet && len(st.paramTyps)+1 == len(v) {
-			// 绑定参数有返回值类型，调用语句中没有该返回值的占位符
-			// 不绑定参数中的返回值参数
+			//绑定参数有返回值类型，调用语句中没有该返回值的占位符
+			//不绑定参数中的返回值参数
 			var val []driver.Value
 			for _, t := range v {
 				if _, ret := t.(*ReturnStatus); ret {
@@ -2311,10 +2311,10 @@ func (st *stmt) NumInput() (count int) {
 	count = 0
 	inQuote := false
 
-	// 兼容SQLSERVER对存储过程名字的调用以及存储过程含返回值的调用
-	// 存储过程调用时占位符数量和绑定参数的数量可能不一致
-	// 返回-1到标准接口以忽略该差异
-	// 在后续执行时会进一步判断参数数量和占位符数量是否匹配
+	//兼容SQLSERVER对存储过程名字的调用以及存储过程含返回值的调用
+	//存储过程调用时占位符数量和绑定参数的数量可能不一致
+	//返回-1到标准接口以忽略该差异
+	//在后续执行时会进一步判断参数数量和占位符数量是否匹配
 	if st.cn.databaseMode == "sqlserver" {
 		count = -1
 		return
@@ -2459,13 +2459,13 @@ func (cn conn) ParseOutValues(rb *readBuf, bindParams []driver.Value, colTyps []
 		}
 	}
 
-	// SQLSERVER模式下存储过程固定有返回值
-	// 获取返回值并根据需要进行赋值
+	//SQLSERVER模式下存储过程固定有返回值
+	//获取返回值并根据需要进行赋值
 	if cn.databaseMode == "sqlserver" {
 		retValue = byteValues[outNum]
 		outNum++
 		if n != nParams {
-			// 用户可能没绑定返回值
+			//用户可能没绑定返回值
 			if n != nParams-1 || nRet != 0 {
 				err = fmt.Errorf("unexpected error: expect %v out parameters, got %v", n, nParams)
 				return
@@ -2485,8 +2485,8 @@ func (cn conn) ParseOutValues(rb *readBuf, bindParams []driver.Value, colTyps []
 			dest := sBind[i].out.Dest
 			switch colTyps[outNum].OID {
 			case cn.allOid.T_int8, cn.allOid.T_bigint:
-				// 对于整型数值如果不开启disable_prepared_binary_result则均为二进制格式
-				// 默认不开启disable_prepared_binary_result
+				//对于整型数值如果不开启disable_prepared_binary_result则均为二进制格式
+				//默认不开启disable_prepared_binary_result
 				switch dest.(type) {
 				case *int:
 					*dest.(*int) = int(binary.BigEndian.Uint64(byteValues[outNum]))
@@ -2666,7 +2666,7 @@ func (cn conn) ParseOutValues(rb *readBuf, bindParams []driver.Value, colTyps []
 				}
 			case cn.allOid.T_refcursor:
 				(*dest.(*CursorString)).CursorName = string(byteValues[outNum])
-			case cn.allOid.T_numeric, cn.allOid.T_money: // decimal
+			case cn.allOid.T_numeric, cn.allOid.T_money: //decimal
 				newString := strings.ReplaceAll(string(byteValues[outNum]), ",", "")
 				s, _ := strconv.ParseUint(newString, 10, 64)
 				f, _ := strconv.ParseFloat(newString, 64)
@@ -2700,7 +2700,7 @@ func (cn conn) ParseOutValues(rb *readBuf, bindParams []driver.Value, colTyps []
 				case *float32:
 					*dest.(*float32) = float32(f)
 				case *decimal.Decimal:
-					// numeric/decimal
+					//numeric/decimal
 					num, _ := decimal.NewFromString(string(byteValues[outNum]))
 					*dest.(*decimal.Decimal) = num
 				case *[]byte:
@@ -2754,8 +2754,8 @@ func (rs *rows) Next(dest []driver.Value) (err error) {
 			return
 		case 'D':
 			if rs.outParamInMultiRes {
-				// OUT参数的结果集
-				// SQLSERVER模式下存储过程固定有返回值并在此结果集中
+				//OUT参数的结果集
+				//SQLSERVER模式下存储过程固定有返回值并在此结果集中
 				err = rs.cn.ParseOutValues(&rs.rb, rs.bindParams, rs.TMessage.colTyps)
 				if err != nil {
 					panic(err)
@@ -2764,7 +2764,7 @@ func (rs *rows) Next(dest []driver.Value) (err error) {
 				err = io.EOF
 				return
 			}
-			// DQL的结果集
+			//DQL的结果集
 			n := rs.rb.int16()
 			if nil != err {
 				conn.bad = true
@@ -3080,16 +3080,16 @@ func (cn *conn) postExecuteWorkaround(st *stmt) (colNames []string, colTyps []fi
 			cn.readReadyForQuery()
 			return
 		case 'T':
-			// case1:发送P/D后，D没有返回T(无out参数的存储过程调用DQL)，发送E后返回T报文，更新结果集信息
-			// case2:发送P/D后，返回了T报文，但执行后又返回T报文，则为多结果集
+			//case1:发送P/D后，D没有返回T(无out参数的存储过程调用DQL)，发送E后返回T报文，更新结果集信息
+			//case2:发送P/D后，返回了T报文，但执行后又返回T报文，则为多结果集
 			//		P/D返回的T报文描述OUT参数且已保存，但OUT参数的结果集在最后一个，所以此处仍用最新的T使标准接口能正确分配泛型数组接收数据
 			newRows := parsePortalRowDescribe(r)
 			colNames, colTyps, colFmts = newRows.colNames, newRows.colTyps, newRows.colFmts
 			TMessage = true
 		case 'D':
-			if !TMessage { // 执行完成后，返回报文中没有T时再尝试判断该结果集是否为OUT参数的结果集
-				// 该结果集可能为OUT参数的结果集(返回值也在此结果集中)，需要对绑定的参数进行判断
-				// 若为OUT参数则进行赋值处理，否则保存报文并在Next中进行处理
+			if !TMessage { //执行完成后，返回报文中没有T时再尝试判断该结果集是否为OUT参数的结果集
+				//该结果集可能为OUT参数的结果集(返回值也在此结果集中)，需要对绑定的参数进行判断
+				//若为OUT参数则进行赋值处理，否则保存报文并在Next中进行处理
 				sBind := make([]bindStruct, len(st.bindParams))
 				resultSet := false
 				for i, t := range st.bindParams {
@@ -3105,15 +3105,15 @@ func (cn *conn) postExecuteWorkaround(st *stmt) (colNames []string, colTyps []fi
 					if err != nil {
 						return
 					}
-					// 已经处理完D报文，保存剩下的其它报文
+					//已经处理完D报文，保存剩下的其它报文
 					continue
 				} else {
 					cn.saveMessage(t, r)
-					// 仍使用之前的结果集信息
+					//仍使用之前的结果集信息
 					colNames, colTyps, colFmts = st.colNames, st.colTyps, st.colFmts
 					return
 				}
-			} else { // 执行完成后，返回报文中包含T报文，则该T报文为多结果集中的第一个T或者是无out参数的存储过程调用DQL
+			} else { //执行完成后，返回报文中包含T报文，则该T报文为多结果集中的第一个T或者是无out参数的存储过程调用DQL
 				cn.saveMessage(t, r)
 				return
 			}
@@ -3121,7 +3121,7 @@ func (cn *conn) postExecuteWorkaround(st *stmt) (colNames []string, colTyps []fi
 			fallthrough
 		case 'I':
 			cn.saveMessage(t, r)
-			if !TMessage { // 执行完并没有得到T报文，则可能在P/D报文之后返回了或无T报文，仍使用之前的结果集信息
+			if !TMessage { //执行完并没有得到T报文，则可能在P/D报文之后返回了或无T报文，仍使用之前的结果集信息
 				colNames, colTyps, colFmts = st.colNames, st.colTyps, st.colFmts
 			}
 			return
@@ -3145,11 +3145,11 @@ func fill64(v []byte) []byte {
 	return fillByte
 }
 
-func (cn *conn) readExecuteResponse(protocolState string, _ []driver.Value, colTyps []fieldDesc, colFmts []format) (res driver.Result, commandTag string, err error) {
+func (cn *conn) readExecuteResponse(protocolState string, colTyps []fieldDesc, colFmts []format) (res driver.Result, commandTag string, err error) {
 	var dest interface{}
 	var lastID int64 = 0
 	var alreadyGet = false
-	// var tag string
+	//var tag string
 	for {
 		t, r := cn.recv1()
 		switch t {
@@ -3162,9 +3162,9 @@ func (cn *conn) readExecuteResponse(protocolState string, _ []driver.Value, colT
 				res = emptyRows
 			}
 		case 'T':
-			// 如果为存储过程out参数的结果集则在postExecuteWorkaround中处理
-			// 此时的结果集理论上仅有为了获取自增列id而添加RETURNING *返回的结果集
-			// 且结果集元信息已存储在语句句柄中，通过参数传入
+			//如果为存储过程out参数的结果集则在postExecuteWorkaround中处理
+			//此时的结果集理论上仅有为了获取自增列id而添加RETURNING *返回的结果集
+			//且结果集元信息已存储在语句句柄中，通过参数传入
 			if nil != err {
 				cn.bad = true
 				errorf("unexpected %q after error %s", t, err)
@@ -3174,7 +3174,7 @@ func (cn *conn) readExecuteResponse(protocolState string, _ []driver.Value, colT
 				cn.bad = true
 				errorf("unexpected %q after error %s", t, err)
 			}
-			// 在开启getLastInsertId后且对于insert语句尝试获取第一列自增列id
+			//在开启getLastInsertId后且对于insert语句尝试获取第一列自增列id
 			if cn.getLastInsertId.enable && cn.getLastInsertId.isInsert {
 				if n := r.int16(); n < 1 {
 					cn.bad = true
@@ -3189,8 +3189,8 @@ func (cn *conn) readExecuteResponse(protocolState string, _ []driver.Value, colT
 					dest = 0
 					continue
 				}
-				// 可以指定auto_increment的类型：tinyint、int2、int4、uint4、int8、uint8、float4、float8、mediumint、middleint、unsignedsmallint、unsignedmediumint
-				// 截止20251205-Main_MySQLMode_Dev，域类型-基类型：bigint为int8；mediumint、middleint、unsignedsmallint、unsignedmediumint均为int4
+				//可以指定auto_increment的类型：tinyint、int2、int4、uint4、int8、uint8、float4、float8、mediumint、middleint、unsignedsmallint、unsignedmediumint
+				//截止20251205-Main_MySQLMode_Dev，域类型-基类型：bigint为int8；mediumint、middleint、unsignedsmallint、unsignedmediumint均为int4
 				dest = decode(&cn.parameterStatus, r.next(l), colTyps[0].OID, colFmts[0], *cn)
 				if !alreadyGet {
 					switch colTyps[0].OID {
@@ -3214,8 +3214,8 @@ func (cn *conn) readExecuteResponse(protocolState string, _ []driver.Value, colT
 						lastID = int64(dest.(float64))
 						alreadyGet = true
 					default:
-						// 对于其它类型不应报错，保持自增值为0即可
-						// errorf("the first column(oid:%d) is not auto_increment id", colTyps[0].OID)
+						//对于其它类型不应报错，保持自增值为0即可
+						//errorf("the first column(oid:%d) is not auto_increment id", colTyps[0].OID)
 					}
 				}
 				continue
@@ -3312,7 +3312,7 @@ func parseEnviron(env []string) (out map[string]string) {
 			accrue("sslrootcert")
 		case "KINGBASE_CONNECT_TIMEOUT":
 			accrue("connect_timeout")
-		// case "KINGBASE_KEEPALIVE_IDLE": accrue("keepalive_idle")//go中idle和interval为相同值
+		//case "KINGBASE_KEEPALIVE_IDLE": accrue("keepalive_idle")//go中idle和interval为相同值
 		case "KINGBASE_KEEPALIVE_INTERVAL":
 			accrue("keepalive_interval")
 		case "KINGBASE_KEEPALIVE_COUNT":

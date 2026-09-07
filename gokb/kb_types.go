@@ -103,9 +103,9 @@ type conn struct {
 	// 非空时notices将被同步发送
 	noticeHandler func(*Error)
 
-	// 本连接的数据库模式
+	//本连接的数据库模式
 	databaseMode string
-	// 该数据库模式下oid和类型名的对应
+	//该数据库模式下oid和类型名的对应
 	allOid   oid.AllOid
 	TypeName map[oid.Oid]string
 
@@ -125,11 +125,11 @@ type autoIncrementId struct {
 }
 
 type timeoutParams struct {
-	// 单位s
+	//单位s
 	connect_timeout    int
 	keepalive_interval int
 	keepalive_count    int
-	// 单位ms
+	//单位ms
 	tcp_user_timeout int
 }
 
@@ -193,7 +193,7 @@ type rows struct {
 	next *rowsHeader
 
 	multiRes
-	// 判断下一个结果集是否为OUT参数的结果集
+	//判断下一个结果集是否为OUT参数的结果集
 	outParamInMultiRes bool
 }
 
@@ -720,13 +720,13 @@ type fieldDesc struct {
 }
 
 type bindStruct struct {
-	// 存储过程OUT参数
+	//存储过程OUT参数
 	out    sql.Out
 	isOut  bool
 	isBoth bool
 	typ    oid.Oid
 
-	// 存储过程返回值
+	//存储过程返回值
 	ret   *ReturnStatus
 	isRet bool
 }
@@ -736,11 +736,11 @@ type CursorString struct {
 }
 
 type multiRes struct {
-	// 多结果集 out参数的T报文
+	//多结果集 out参数的T报文
 	TMessage rowsHeader
-	// 执行时绑定的参数
+	//执行时绑定的参数
 	bindParams []driver.Value
-	// 绑定的参数是否有返回值
+	//绑定的参数是否有返回值
 	hasRet bool
 }
 

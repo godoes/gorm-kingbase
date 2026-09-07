@@ -113,7 +113,7 @@ func NewConnector(dsn string) (conn *Connector, err error) {
 			return nil, err
 		}
 	} else {
-		timeout.keepalive_interval = 0 // 配置为0则go使用自身的默认表现15s
+		timeout.keepalive_interval = 0 //配置为0则go使用自身的默认表现15s
 	}
 	if v, ok := o["keepalive_count"]; ok {
 		timeout.keepalive_count, err = strconv.Atoi(v)
@@ -121,7 +121,7 @@ func NewConnector(dsn string) (conn *Connector, err error) {
 			return nil, err
 		}
 	} else {
-		timeout.keepalive_count = 10 // 次数使用0并不会使用go的默认值10而是会报错无法连接，所以此处显式赋10
+		timeout.keepalive_count = 10 //次数使用0并不会使用go的默认值10而是会报错无法连接，所以此处显式赋10
 	}
 	if v, ok := o["tcp_user_timeout"]; ok {
 		timeout.tcp_user_timeout, err = strconv.Atoi(v)

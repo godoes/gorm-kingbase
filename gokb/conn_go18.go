@@ -59,25 +59,25 @@ func IsValue(v interface{}) bool {
 		return true
 	}
 	switch v.(type) {
-	case int, int64, int32, int16, int8, sql.NullInt64: // 有符号整型
+	case int, int64, int32, int16, int8, sql.NullInt64: //有符号整型
 		return true
-	case uint, uint64, uint32, uint16, uint8: // 无符号整型
+	case uint, uint64, uint32, uint16, uint8: //无符号整型
 		return true
-	case []uint8: // bytea
+	case []uint8: //bytea
 		return true
-	case float64, float32, sql.NullFloat64: // 浮点型
+	case float64, float32, sql.NullFloat64: //浮点型
 		return true
-	case bool, sql.NullBool: // 布尔类型
+	case bool, sql.NullBool: //布尔类型
 		return true
-	case string: // 字符串类型
+	case string: //字符串类型
 		return true
-	case time.Time: // 时间类型
+	case time.Time: //时间类型
 		return true
-	case CursorString: // KB自定义游标类型
+	case CursorString: //KB自定义游标类型
 		return true
-	case DateTime1, civil.Date, civil.Time: // 兼容mssql的DateTime1, civil.Date, civil.Time
+	case DateTime1, civil.Date, civil.Time: //兼容mssql的DateTime1, civil.Date, civil.Time
 		return true
-	case VarChar, VarCharMax, NVarCharMax, NChar, sql.NullString: // 兼容mssql的VarChar, VarCharMax, NVarCharMax, NChar, sql.NullString
+	case VarChar, VarCharMax, NVarCharMax, NChar, sql.NullString: //兼容mssql的VarChar, VarCharMax, NVarCharMax, NChar, sql.NullString
 		return true
 	case decimal.Decimal:
 		return true
@@ -100,7 +100,7 @@ func callValuerValue(vr driver.Valuer) (v driver.Value, err error) {
 
 // ConvertValue 实现"CheckNamedValue"接口中的"ConvertValue"函数
 func (c converter) ConvertValue(v interface{}) (driver.Value, error) {
-	// 对gokb.Array等类型的支持
+	//对gokb.Array等类型的支持
 	switch vr := v.(type) {
 	case driver.Valuer:
 		sv, err := callValuerValue(vr)
@@ -113,16 +113,16 @@ func (c converter) ConvertValue(v interface{}) (driver.Value, error) {
 		return sv, nil
 	}
 
-	// 判断是否为支持的in类型参数
+	//判断是否为支持的in类型参数
 	if IsValue(v) {
 		return v, nil
 	}
 
-	// 判断是否为out类型参数
+	//判断是否为out类型参数
 	var sBind bindStruct
 	sBind.out, sBind.isOut = v.(sql.Out)
 	sBind.ret, sBind.isRet = v.(*ReturnStatus)
-	if sBind.isRet { // SQLSERVER模式下存储过程返回值类型
+	if sBind.isRet { //SQLSERVER模式下存储过程返回值类型
 		return v, nil
 	}
 	switch sBind.out.Dest.(type) {
@@ -149,7 +149,7 @@ func (c converter) ConvertValue(v interface{}) (driver.Value, error) {
 	case *decimal.Decimal:
 		return v, nil
 	}
-	// 其它in类型参数
+	//其它in类型参数
 	rv := reflect.ValueOf(v)
 	switch rv.Kind() {
 	case reflect.Ptr:
@@ -381,7 +381,7 @@ func (cn *conn) cancel(ctx context.Context) error {
 		}
 
 		w := can.writeBuf(0)
-		w.int32(80877102) // 取消请求代码
+		w.int32(80877102) //取消请求代码
 		w.int32(cn.processID)
 		w.int32(cn.secretKey)
 

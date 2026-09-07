@@ -443,7 +443,7 @@ func (a GenericArray) Value() (value driver.Value, err error) {
 	}
 
 	if n := rv.Len(); 0 < n {
-		// 至少有两个大括号，N字节的值和N-1字节的分隔符
+		//至少有两个大括号，N字节的值和N-1字节的分隔符
 		b := make([]byte, 0, 1+2*n)
 
 		b, _, err = appendArray(b, rv, n)
@@ -503,7 +503,7 @@ func (a Int64Array) Value() (value driver.Value, err error) {
 	}
 
 	if n := len(a); 0 < n {
-		// 至少有链各个大括号，N字节的值和N-1字节的分隔符
+		//至少有链各个大括号，N字节的值和N-1字节的分隔符
 		b := make([]byte, 1, 1+2*n)
 		b[0] = '{'
 
@@ -569,7 +569,7 @@ func (a StringArray) Value() (value driver.Value, err error) {
 	}
 
 	if n := len(a); 0 < n {
-		// 至少有两个大括号，2*N字节的引用和N-1字节的分隔符
+		//至少有两个大括号，2*N字节的引用和N-1字节的分隔符
 		b := make([]byte, 1, 1+3*n)
 		b[0] = '{'
 
