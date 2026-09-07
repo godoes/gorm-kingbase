@@ -24,7 +24,7 @@ func TestBuildUrl(t *testing.T) {
 				password: "abc!@#$%^",
 				host:     "127.0.0.1",
 				port:     54321,
-				dbname:   "kingbase",
+				dbname:   DriverName,
 				options:  []map[string]string{{"search_path": "public"}},
 			},
 			want: "kingbase://kes:abc%21%40%23$%25%5E@127.0.0.1:54321/kingbase?search_path=public",
