@@ -20,7 +20,7 @@ func CreateDialer(timeout timeoutParams) net.Dialer {
 			err := c.Control(func(fd uintptr) {
 				//通过系统调用依次设置keepalive_count、tcp_user_timeout
 				//keepalive_idle和keepalive_interval必须在上述KeepAlive设置，否则会被KeepAlive的默认值15s覆盖
-				controlErr = syscall.SetsockoptInt(int(fd), syscall.IPPROTO_TCP, syscall.TCP_KEEPCNT, timeout.keepalive_count)
+				controlErr = syscall.SetsockoptInt(int(fd), syscall.IPPROTO_TCP, tcpKeepCnt, timeout.keepalive_count)
 				if controlErr != nil {
 					return
 				}
